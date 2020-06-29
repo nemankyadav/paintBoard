@@ -1,0 +1,134 @@
+<!-- background Button -->
+<!-- Eraser/Undo? -->
+<!-- CSS Dynamic pane -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Board</title>
+    <link rel="stylesheet" href="paintBoard.css">
+</head>
+<body>
+    <nav>
+        <span>aaa</span>
+        <span>aaa</span>
+
+        <span>aaa</span>
+
+        <span>aaa</span>
+
+    </nav>
+    <div id = "settings">
+            <b>Width:&emsp;&emsp;&emsp;&emsp;</b>
+            <select name="Line Width" id="lineWidth">
+                <option value="dynamic">Dynamic</option>
+                <option value="1">1</option>
+                <option value="4">4</option>
+                <option value="8">8</option>
+                <option value="12">12</option>
+                <option value="18">18</option>
+                <option value="24">24</option>
+                <option value="35">35</option>
+                <option value="50">50</option>
+                <option value="70">70</option>
+                <option value="90">90</option>
+            </select>
+            <br>
+            <b>Colour:</b>
+            &emsp;&emsp;&emsp;&ensp;<input type="checkbox" checked id="rand">Activate Random Colour Selector<br>
+            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;<input type="color" disabled id="col">
+            <br>
+        <b>Line-Cap Shape:</b>
+        <select name="Line Cap" id="cap">
+            <option value="round">Round</option>
+            <option value="butt">Lines</option>
+            <option value="square">Squared</option>
+        </select>
+        <input type="button" value="Clear Canvas" id="clear">
+    </div>
+    <canvas height="700" width="890" id="canvas" style="border:1px black solid;">
+    </canvas>
+   
+   
+   
+   <script>
+       valueGetter();
+        var randomColor
+        var lineCaps,lineThickness,lineCol,lineColRand
+        var mouse = false
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext("2d")
+        ctx.canvas.width  = window.innerWidth-25;
+        ctx.canvas.height = window.innerHeight-100;
+        var i=1,x1,y1,x2,y2,flag=0
+        
+        var settings = document.getElementById("settings")
+        settings.addEventListener("input",function submit(){
+                    valueGetter()
+                    if (!lineColRand) {
+                        document.querySelector("#col").removeAttribute("disabled")
+                    }
+                })
+
+        function valueGetter(){
+            lineThickness = document.querySelector("#lineWidth").value
+            lineColRand = document.querySelector("#rand").checked
+            lineCol = document.querySelector("#col").value
+            lineCaps = document.querySelector("#cap").value
+        }
+       
+        canvas.addEventListener("mousedown",function down(e){
+            x1 = e.offsetX
+            y1 = e.offsetY
+            mouse = true
+            randomColor = 'rgb('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+(Math.random()+1)/2+')'
+            draw(x1,y1,x1,y1)
+        })
+        canvas.addEventListener("mousemove",function moving(e){
+            if(mouse==true){
+            x2 = e.offsetX
+            y2 = e.offsetY
+            draw(x1,y1,x2,y2)
+            x1=x2
+            y1=y2
+            }
+        })
+        canvas.addEventListener("mouseup",function up(e){
+            x1 = e.offsetX
+            y1 = e.offsetY
+            mouse = false
+            ctx.closePath()
+            draw(x1,y1)
+        })
+
+        function draw(x1,y1,x2,y2){
+            if (mouse==true){
+                ctx.beginPath()
+                ctx.moveTo(x1,y1)
+                if (lineThickness=='dynamic') {
+                if(ctx.lineWidth<80 && flag ==0){ctx.lineWidth = ++i}
+                else {flag = 1
+                    ctx.lineWidth = i--
+                    if (ctx.lineWidth==1) {
+                        flag =0
+                    }}
+                }
+                else ctx.lineWidth = lineThickness
+                if (lineColRand)
+                    ctx.strokeStyle = randomColor
+                else ctx.strokeStyle = lineCol
+                
+                ctx.fill()
+                ctx.lineCap = lineCaps
+                ctx.lineTo(x2,y2)
+                ctx.stroke()
+            }
+        }
+        document.querySelector("#clear").addEventListener("click",function clear(){
+           ctx.clearRect(0,0,window.innerWidth-25,window.innerHeight-100)
+           console.log("Clearing")
+       })
+    </script>
+</body>
+</html>
