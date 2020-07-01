@@ -1,7 +1,4 @@
-<!-- background change Button -->
 <!-- Eraser/Undo? -->
-<!-- CSS Dynamic navigation pane for settings-->
-<!-- Time based colour change-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,41 +9,46 @@
     <link rel="stylesheet" href="paintBoard.css">
 </head>
 <body>
-    <!-- <nav>
-        <span>aaa</span>
-        <span>aaa</span>
-    </nav> -->
-    <div id = "settings">
-            <b>Width:&emsp;&emsp;&emsp;&emsp;</b>
-            <select name="Line Width" id="lineWidth">
-                <option value="dynamic">Dynamic</option>
-                <option value="1">1</option>
-                <option value="4">4</option>
-                <option value="8">8</option>
-                <option value="12">12</option>
-                <option value="18">18</option>
-                <option value="24">24</option>
-                <option value="35">35</option>
-                <option value="50">50</option>
-                <option value="70">70</option>
-                <option value="90">90</option>
-            </select>
-            <br>
-            <b>Colour:</b>
-            &emsp;&emsp;&emsp;&ensp;<input type="checkbox" checked id="rand">Activate Random Colour Selector<br>
-            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;<input type="color" disabled id="col">
-            <br>
-        <b>Line-Cap Shape:</b>
-        <select name="Line Cap" id="cap">
-            <option value="round">Round</option>
-            <option value="butt">Lines</option>
-            <option value="square">Squared</option>
-        </select>
-        <input type="button" value="Clear Canvas" id="clear">
+    <div id="main">
+        <div id = "settings">
+            <img src="settings.png" height="200px" width="200px" id="set"><div></div><div></div>
+            <div class="a a1" >
+                <img src="lineWidth.png" height="70px" width="70px" id="img1" class="icon">
+                <select name="Line Width" id="lineWidth">
+                    <option value="dynamic">Dynamic</option>
+                    <option value="1">1</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                    <option value="18">18</option>
+                    <option value="24">24</option>
+                    <option value="35">35</option>
+                    <option value="50">50</option>
+                    <option value="70">70</option>
+                    <option value="90">90</option>
+                </select>
+            </div>
+            <div class="a a2" >
+                <img src="ss.png" height="70px" width="70px" id="img2" class="icon">
+                <div class="radio">
+                <input type="radio" name="colour" checked id="rain">Rainbow<br>
+                <input type="radio" name="colour" id="rand">Random Stroke<br>
+                <input type="radio" name="colour" id="solid"><input type="color"  disabled id="col">
+                </div>
+            </div>
+            <div class="a a3" >
+            <img src="cap.png" height="70px" width="70px" id="img3" class="icon">
+            <select name="Line Cap" id="cap">
+                <option value="round">Round</option>
+                <option value="butt">Lines</option>
+                <option value="square">Squared</option>
+            </select></div><div class="a a4" >
+            <img src="cls.png" height="70px" width="70px" id="img4" class="icon"></div><div class="a a5" >
+            <img src="bg.png" height="70px" width="70px" id="img5" class="icon"></div>
+        </div>
+        <canvas id="canvas">
+        </canvas>
     </div>
-    <canvas height="700" width="890" id="canvas" style="border:1px black solid;">
-    </canvas>
-   
    
    
    <script>
@@ -56,24 +58,50 @@
         var mouse = false
         var canvas = document.getElementById("canvas")
         var ctx = canvas.getContext("2d")
-        ctx.canvas.width  = window.innerWidth-25;
-        ctx.canvas.height = window.innerHeight-100;
+        ctx.canvas.width  = window.innerWidth-102;
+        ctx.canvas.height = window.innerHeight-2;
         var i=1,x1,y1,x2,y2,flag=0
-        
+        var hue = 0
         var settings = document.getElementById("settings")
-        settings.addEventListener("input",function submit(){
-                    valueGetter()
-                    if (!lineColRand) {
-                        document.querySelector("#col").removeAttribute("disabled")
-                    }
-                })
+        var a1 = document.querySelector(".a1")
+        var a2 = document.querySelector(".a2")
+        var a3 = document.querySelector(".a3")
+        var a4 = document.querySelector(".a4")
+        var a5 = document.querySelector(".a5")
+        var flagA=0, flagB=0, flagC=0
 
-        function valueGetter(){
-            lineThickness = document.querySelector("#lineWidth").value
-            lineColRand = document.querySelector("#rand").checked
-            lineCol = document.querySelector("#col").value
-            lineCaps = document.querySelector("#cap").value
-        }
+        settings.addEventListener("input", function(){
+            valueGetter()
+            if(document.querySelector("#solid").checked)
+            document.querySelector("#col").removeAttribute("disabled")
+            else document.querySelector("#col").setAttribute("disabled","disabled")
+            if(flagA==1||flagB==1||flagC==1){
+                document.querySelector("#img1").style.setProperty("visibility","visible")
+                document.querySelector("#lineWidth").style.setProperty("visibility","hidden")
+                document.querySelector("#img2").style.setProperty("visibility","visible")
+                document.querySelector(".radio").style.setProperty("visibility","hidden")
+                document.querySelector("#img3").style.setProperty("visibility","visible")
+                document.querySelector("#cap").style.setProperty("visibility","hidden")
+            }
+        })
+       
+        document.querySelector("#img1").addEventListener("click",function(){
+            flagA = 1
+            document.querySelector("#lineWidth").style.setProperty("visibility","visible")
+            document.querySelector("#img1").style.setProperty("visibility","hidden")
+        })
+
+        document.querySelector("#img2").addEventListener("click",function(){
+            flagB = 1
+            document.querySelector("#img2").style.setProperty("visibility","hidden")
+            document.querySelector(".radio").style.setProperty("visibility","visible")
+        })
+
+        document.querySelector("#img3").addEventListener("click",function(){
+            flagC = 1
+            document.querySelector("#img3").style.setProperty("visibility","hidden")
+            document.querySelector("#cap").style.setProperty("visibility","visible")
+        })
        
         canvas.addEventListener("mousedown",function down(e){
             x1 = e.offsetX
@@ -92,12 +120,12 @@
             }
         })
         canvas.addEventListener("mouseup",function up(e){
-            x1 = e.offsetX
-            y1 = e.offsetY
             mouse = false
-            ctx.closePath()
-            draw(x1,y1)
         })
+        canvas.addEventListener("mouseout",function up(e){
+            mouse = false
+        })
+        
 
         function draw(x1,y1,x2,y2){
             if (mouse==true){
@@ -107,13 +135,16 @@
                 if(ctx.lineWidth<80 && flag ==0){ctx.lineWidth = ++i}
                 else {flag = 1
                     ctx.lineWidth = i--
-                    if (ctx.lineWidth==1) {
+                    if (ctx.lineWidth==5) {
                         flag =0
                     }}
                 }
                 else ctx.lineWidth = lineThickness
                 if (lineColRand)
                     ctx.strokeStyle = randomColor
+                else if (lineColRain){
+                    ctx.strokeStyle = `hsl(${hue++},50%,50%)`
+                }
                 else ctx.strokeStyle = lineCol
                 
                 ctx.fill()
@@ -122,10 +153,22 @@
                 ctx.stroke()
             }
         }
-        document.querySelector("#clear").addEventListener("click",function clear(){
-           ctx.clearRect(0,0,window.innerWidth-25,window.innerHeight-100)
-           console.log("Clearing")
+        function valueGetter(){
+            lineThickness = document.querySelector("#lineWidth").value
+            lineColRand = document.querySelector("#rand").checked
+            lineCol = document.querySelector("#col").value
+            lineCaps = document.querySelector("#cap").value
+            lineColRain = document.querySelector("#rain").checked
+        }
+
+        document.querySelector("#img4").addEventListener("click",function clear(){
+           ctx.clearRect(0,0,window.innerWidth,window.innerHeight)
        })
+        document.querySelector("#img5").addEventListener("click",function back(){
+            randomColor = 'rgb('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+',1)'
+            document.querySelector(":root").style.setProperty("--bgCol",randomColor)
+       })
+        
     </script>
 </body>
 </html>
